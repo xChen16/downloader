@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/downloader/config"
+	"github.com/downloader/extract"
 	"github.com/downloader/tools"
 )
 
