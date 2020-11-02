@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/downloader/config"
+	"github.com/downloader/tools"
 )
 
 func init() {
@@ -22,6 +23,7 @@ func main() {
 		fmt.Printf(
 			"go downloader version : %s.\n", config.VERSION,
 		)
+		return
 	}
 	if len(args) < 1 {
 		fmt.Println("error")
