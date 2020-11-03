@@ -17,3 +17,5 @@ var FakeHeaders = map[string]string{
 	"Accept-Language": "en-US,en;q=0.8",
 	"User-Agent":      "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0",
 }
+
+const VERSION string = "1.0"

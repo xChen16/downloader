@@ -27,7 +27,7 @@ func main() {
 		return
 	}
 	if len(args) < 1 {
-		fmt.Println("error")
+		fmt.Println("command error")
 		return
 	}
 	videoURL := args[0]

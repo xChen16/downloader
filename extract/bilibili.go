@@ -7,11 +7,11 @@ import (
 	"log"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/downloader/config"
 	"github.com/downloader/downloader"
+	"github.com/downloader/request"
 	"github.com/downloader/tools"
-	"github.com/iawia002/annie/request"
-	"github.com/iawia002/annie/utils"
 )
 
 const (
@@ -118,7 +118,7 @@ func Bilibili(url string) downloader.VideoData {
 	}
 	data := downloader.VideoData{
 		Site:  "哔哩哔哩 bilibili.com",
-		Title: utils.FileName(title),
+		Title: tools.FileName(title),
 		URLs:  urls,
 		Ext:   format,
 		Size:  size,
