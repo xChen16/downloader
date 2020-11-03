@@ -11,8 +11,8 @@ import (
 
 	"github.com/cheggaaa/pb"
 	"github.com/downloader/config"
+	"github.com/downloader/request"
 	"github.com/downloader/tools"
-	"github.com/izghua/zgh/request"
 )
 
 // URLData data struct of single URL
