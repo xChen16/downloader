@@ -33,13 +33,23 @@ type bilibiliData struct {
 	Quality int        `json:"quality"`
 }
 
+type tokenData struct {
+	Token string `json:"token"`
+}
+
+type token struct {
+	Code    int       `json:"code"`
+	Message string    `json:"message"`
+	Data    tokenData `json:"data"`
+}
+
 func getSign(params string) string {
 	sign := md5.New()
 	sign.Write([]byte(params + secKey))
 	return fmt.Sprintf("%x", sign.Sum(nil))
 }
 
-func genAPI(cid string, bangumi bool) string {
+func genAPI(aid, cid string, bangumi bool) string {
 	var (
 		baseAPIURL string
 		params     string
@@ -59,7 +69,24 @@ func genAPI(cid string, bangumi bool) string {
 		)
 		baseAPIURL = config.BILIBILI_API
 	}
-	api := baseAPIURL + params + "&sign=" + getSign(params)
+
+	utoken := ""
+	if config.Cookie != "" {
+		utoken = request.Get(fmt.Sprintf(
+			"%said=%s&cid=%s", config.BILIBILI_TOKEN_API, aid, cid,
+		))
+		var t token
+		json.Unmarshal([]byte(utoken), &t)
+		if t.Code != 0 {
+			log.Println(config.Cookie)
+			log.Fatal("Cookie error: ", t.Message)
+		}
+		utoken = t.Data.Token
+	}
+	api := fmt.Sprintf(
+		"%s%s&sign=%s&utoken=%s", baseAPIURL, params, getSign(params), utoken,
+	)
+	/* api := baseAPIURL + params + "&sign=" + getSign(params) */
 	return api
 }
 
@@ -88,13 +115,14 @@ func Bilibili(url string) downloader.VideoData {
 	if strings.Contains(url, "bangumi") {
 		bangumi = true
 	}
+	aid := tools.Match1(`av(\d+)`, url)[1]
 	html := request.Get(url)
 	if bangumi {
 		cid = tools.Match1(`"cid":(\d+)`, html)[1]
 	} else {
 		cid = tools.Match1(`cid=(\d+)`, html)[1]
 	}
-	api := genAPI(cid, bangumi)
+	api := genAPI(aid, cid, bangumi)
 	apiData := request.Get(api)
 	var dataDict bilibiliData
 	json.Unmarshal([]byte(apiData), &dataDict)
@@ -112,15 +140,15 @@ func Bilibili(url string) downloader.VideoData {
 	}
 
 	urls, size := genURL(dataDict.DURL)
-	format := dataDict.Format
+	/* format := dataDict.Format
 	if format == "flv720" {
 		format = "flv"
-	}
+	} */
 	data := downloader.VideoData{
 		Site:  "哔哩哔哩 bilibili.com",
 		Title: tools.FileName(title),
 		URLs:  urls,
-		Ext:   format,
+		Ext:   "flv",
 		Size:  size,
 	}
 	data.Download(url)
